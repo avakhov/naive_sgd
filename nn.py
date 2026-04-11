@@ -15,6 +15,12 @@ def points(fig, n):
         raise ValueError("wrong fig name")
     return out
 
+def gd(model, batch, lr):
+    L = model.loss(batch)
+    L.backward()
+    print(L.data)
+
+
 class SimpleNN:
     def __init__(self, n0, n1, n2, n3):
         self.n0 = n0
@@ -63,11 +69,6 @@ class SimpleNN:
         out = Value.mul(out, Value(1.0/len(batch)))
         return out
 
-    def train_step(self, batch, lr):
-        L = self.loss(batch)
-        L.backward()
-        print(L.data)
-
     def _rand_array(self, n):
         out = []
         for i in range(n):
@@ -85,4 +86,4 @@ class SimpleNN:
 random.seed(123)
 n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
 data = points("heart", 10)
-n.train_step(data, 0.1)
+gd(n, data, 0.1)
