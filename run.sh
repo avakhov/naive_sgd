@@ -1,13 +1,6 @@
 #!/bin/bash
-set -e
-
-if [ "$1" = "b" ]; then
-  set -x
-  pushd docker
-    docker build -t network .
-  popd
-  set +x
-fi
-
-set -x
-docker run -it --rm --name pd -v`pwd`:/w -w /w network python draw.py
+set -ex
+rm -f graph.png
+python train.py
+docker build -t naive-sgd-draw .
+docker run --rm -v "$PWD:/app" naive-sgd-draw
