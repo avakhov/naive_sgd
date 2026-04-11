@@ -77,7 +77,6 @@ class SimpleNN:
 
         # loss
         L = 0.0
-        dL_dw3_00 = 0.0
         for b in range(len(batch)):
             x = []
             for i in range(self.n0):
@@ -109,12 +108,8 @@ class SimpleNN:
                 h3.append(self.sigma(h3i))
             for m in range(self.n3):
                 L += (h3[m] - y[m])**2
-        L = L / len(batch)
-        for m in range(self.n3):
-            dL_db3[m] = dL_db3[m] / len(batch)
+        L /= len(batch)
         print(L)
-        print(dL_db3)
-
 
     def _zero_array(self, n):
         out = []
