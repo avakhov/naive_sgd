@@ -16,9 +16,11 @@ def points(fig, n):
     return out
 
 def gd(model, batch, lr):
-    L = model.loss(batch)
-    L.backward()
-    print(L.data)
+    for i in range(1000):
+        L = model.loss(batch)
+        L.backward()
+        L.step(lr)
+        print(L.data)
 
 
 class SimpleNN:
@@ -85,5 +87,5 @@ class SimpleNN:
 
 random.seed(123)
 n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
-data = points("heart", 10)
+data = points("heart", 50)
 gd(n, data, 0.1)

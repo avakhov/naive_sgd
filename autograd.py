@@ -66,3 +66,18 @@ class Value:
         self.grad = 1.0
         for node in reversed(topo):
             node._backward()
+
+    def step(self, lr):
+        topo = []
+        visited = set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build(child)
+                topo.append(v)
+        build(self)
+        for node in topo:
+            if not node._prev:
+                node.data -= lr * node.grad
+                node.grad = 0.0
