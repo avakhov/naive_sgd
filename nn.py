@@ -79,32 +79,32 @@ class SimpleNN:
         L = 0.0
         for b in range(len(batch)):
             x = []
-            for k in range(self.n0):
-                x.append(batch[b][k])
+            for i in range(self.n0):
+                x.append(batch[b][i])
             y = []
             for m in range(self.n3):
                 y.append(batch[b][self.n0 + m])
             h0 = x
             h1 = []
-            for i in range(self.n1):
+            for j in range(self.n1):
                 h1i = 0.0
-                for j in range(self.n0):
-                    h1i += x[j]*self.w1[j][i]
-                h1i += self.b1[i]
+                for i in range(self.n0):
+                    h1i += x[i]*self.w1[i][j]
+                h1i += self.b1[j]
                 h1.append(self.sigma(h1i))
             h2 = []
-            for i in range(self.n2):
+            for k in range(self.n2):
                 h2i = 0.0
                 for j in range(self.n1):
-                    h2i += h1[j]*self.w2[j][i]
-                h2i += self.b2[i]
+                    h2i += h1[j]*self.w2[j][k]
+                h2i += self.b2[k]
                 h2.append(self.sigma(h2i))
             h3 = []
-            for i in range(self.n3):
+            for m in range(self.n3):
                 h3i = 0.0
-                for j in range(self.n2):
-                    h3i += h2[j]*self.w3[j][i]
-                h3i += self.b3[i]
+                for k in range(self.n2):
+                    h3i += h2[k]*self.w3[k][m]
+                h3i += self.b3[m]
                 h3.append(self.sigma(h3i))
             for m in range(self.n3):
                 L += (h3[m] - y[m])**2
