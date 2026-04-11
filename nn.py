@@ -1,5 +1,6 @@
 import random
 import math
+from autograd import Value
 
 def points(fig, n):
     ta = [t / n for t in range(n + 1)]
@@ -29,52 +30,45 @@ class SimpleNN:
         self.sigma = math.tanh
         self.deriv = lambda x: 1 - math.tanh(x)**2
 
-    def forward(self, h0):
-        h1 = []
-        for i in range(self.n1):
-            h1i = 0.0
-            for j in range(self.n0):
-                h1i += h0[j]*self.w1[j][i]
-            h1i += self.b1[i]
-            h1.append(self.sigma(h1i))
-        h2 = []
-        for i in range(self.n2):
-            h2i = 0.0
-            for j in range(self.n1):
-                h2i += h1[j]*self.w2[j][i]
-            h2i += self.b2[i]
-            h2.append(self.sigma(h2i))
-        h3 = []
-        for i in range(self.n3):
-            h3i = 0.0
-            for j in range(self.n2):
-                h3i += h2[j]*self.w3[j][i]
-            h3i += self.b3[i]
-            h3.append(self.sigma(h3i))
-        return h3
+    # def forward(self, h0):
+    #     h1 = []
+    #     for i in range(self.n1):
+    #         h1i = 0.0
+    #         for j in range(self.n0):
+    #             h1i += h0[j]*self.w1[j][i]
+    #         h1i += self.b1[i]
+    #         h1.append(self.sigma(h1i))
+    #     h2 = []
+    #     for i in range(self.n2):
+    #         h2i = 0.0
+    #         for j in range(self.n1):
+    #             h2i += h1[j]*self.w2[j][i]
+    #         h2i += self.b2[i]
+    #         h2.append(self.sigma(h2i))
+    #     h3 = []
+    #     for i in range(self.n3):
+    #         h3i = 0.0
+    #         for j in range(self.n2):
+    #             h3i += h2[j]*self.w3[j][i]
+    #         h3i += self.b3[i]
+    #         h3.append(self.sigma(h3i))
+    #     return h3
 
-    def loss(self, batch):
-        out = 0.0
-        for i in range(len(batch)):
-            x = []
-            for k in range(self.n0):
-                x.append(batch[i][k])
-            y = []
-            for m in range(self.n3):
-                y.append(batch[i][self.n0 + m])
-            v = self.forward(x)
-            for m in range(self.n3):
-                out += (v[m] - y[m])**2
-        return out / len(batch)
+    # def loss(self, batch):
+    #     out = 0.0
+    #     for i in range(len(batch)):
+    #         x = []
+    #         for k in range(self.n0):
+    #             x.append(batch[i][k])
+    #         y = []
+    #         for m in range(self.n3):
+    #             y.append(batch[i][self.n0 + m])
+    #         v = self.forward(x)
+    #         for m in range(self.n3):
+    #             out += (v[m] - y[m])**2
+    #     return out / len(batch)
 
     def train_step(self, batch, lr):
-        dL_dw1 = self._zero_matrix(self.n0, self.n1)
-        dL_db1 = self._zero_array(self.n1)
-        dL_dw2 = self._zero_matrix(self.n1, self.n2)
-        dL_db2 = self._zero_array(self.n2)
-        dL_dw3 = self._zero_matrix(self.n2, self.n3)
-        dL_db3 = self._zero_array(self.n3)
-
         # loss
         L = 0.0
         for b in range(len(batch)):
@@ -100,22 +94,16 @@ class SimpleNN:
                 h2i += self.b2[k]
                 h2.append(self.sigma(h2i))
             h3 = []
-            dh3_db3 = []
             for m in range(self.n3):
                 h3i = 0.0
                 for k in range(self.n2):
                     h3i += h2[k]*self.w3[k][m]
                 h3i += self.b3[m]
                 h3.append(self.sigma(h3i))
-                dh3_db3.append(self.deriv(h3i))
             for m in range(self.n3):
                 L += (h3[m] - y[m])**2
-                dL_db3[m] += 2*(h3[m] - y[m])*dh3_db3[m]
         L /= len(batch)
-        for m in range(self.n3):
-            dL_db3[m] /= len(batch)
         print(L)
-        print(dL_db3)
 
     def _zero_array(self, n):
         out = []
@@ -126,7 +114,7 @@ class SimpleNN:
     def _rand_array(self, n):
         out = []
         for i in range(n):
-            out.append(random.gauss(0, 1))
+            out.append(Value(random.gauss(0, 1)).data)
         return out
 
     def _zero_matrix(self, n, m):
@@ -142,7 +130,7 @@ class SimpleNN:
         for i in range(n):
             out.append([])
             for j in range(m):
-                out[len(out) - 1].append(random.gauss(0, 1))
+                out[len(out) - 1].append(Value(random.gauss(0, 1)).data)
         return out
 
 random.seed(123)

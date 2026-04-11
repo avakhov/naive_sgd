@@ -47,9 +47,3 @@ class Value:
         self.grad = 1.0
         for node in reversed(topo):
             node._backward()
-
-x = Value(2.0)
-z = Value.pow(x,3)
-z.backward()
-print("z =", z.data) 
-print("dz/dx =", x.grad)
