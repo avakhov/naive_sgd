@@ -2,17 +2,17 @@ import random
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from nn import SimpleNN, points, sgd
+from nn import SimpleNN, points, sgd, gd
 
 random.seed(123)
 
-dataset = points("heart", 50)
+dataset = points("heart", 200)
 t_list = [row[0] for row in dataset]
 x = [row[1] for row in dataset]
 y = [row[2] for row in dataset]
 
-n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
-sgd(n, dataset, lr=0.1, epochs=5000, batch_size=8, snapshot_every=100)
+n = SimpleNN(n0=1, n1=20, n2=20, n3=2)
+sgd(n, dataset, lr=0.3, epochs=500, snapshot_every=10)
 
 # graph
 plt.figure(figsize=(6.5, 6.5), dpi=100)
