@@ -74,14 +74,16 @@ class SimpleNN:
         dL_db2 = self._zero_array(self.n2)
         dL_dw3 = self._zero_matrix(self.n2, self.n3)
         dL_db3 = self._zero_array(self.n3)
-        out = 0.0
-        for i in range(len(batch)):
+
+        # loss
+        L = 0.0
+        for b in range(len(batch)):
             x = []
             for k in range(self.n0):
-                x.append(batch[i][k])
+                x.append(batch[b][k])
             y = []
             for m in range(self.n3):
-                y.append(batch[i][self.n0 + m])
+                y.append(batch[b][self.n0 + m])
             h0 = x
             h1 = []
             for i in range(self.n1):
@@ -104,11 +106,15 @@ class SimpleNN:
                     h3i += h2[j]*self.w3[j][i]
                 h3i += self.b3[i]
                 h3.append(self.sigma(h3i))
-            v = h3
             for m in range(self.n3):
-                out = out + (v[m] - y[m])**2
-        out = out / len(batch)
-        print(out)
+                L += (h3[m] - y[m])**2
+                dL_db3[m] += 2*(h3[m] - y[m])
+        L = L / len(batch)
+        for m in range(self.n3):
+            dL_db3[m] = dL_db3[m] / len(batch)
+        print(L)
+        print(dL_db3)
+
 
     def _zero_array(self, n):
         out = []
