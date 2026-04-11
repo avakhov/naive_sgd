@@ -28,77 +28,45 @@ class SimpleNN:
         self.w3 = self._rand_matrix(n2, n3)
         self.b3 = self._rand_array(n3)
 
-    # def forward(self, h0):
-    #     h1 = []
-    #     for i in range(self.n1):
-    #         h1i = 0.0
-    #         for j in range(self.n0):
-    #             h1i += h0[j]*self.w1[j][i]
-    #         h1i += self.b1[i]
-    #         h1.append(self.sigma(h1i))
-    #     h2 = []
-    #     for i in range(self.n2):
-    #         h2i = 0.0
-    #         for j in range(self.n1):
-    #             h2i += h1[j]*self.w2[j][i]
-    #         h2i += self.b2[i]
-    #         h2.append(self.sigma(h2i))
-    #     h3 = []
-    #     for i in range(self.n3):
-    #         h3i = 0.0
-    #         for j in range(self.n2):
-    #             h3i += h2[j]*self.w3[j][i]
-    #         h3i += self.b3[i]
-    #         h3.append(self.sigma(h3i))
-    #     return h3
+    def forward(self, h0):
+        h1 = []
+        for i in range(self.n1):
+            h1i = Value(0.0)
+            for j in range(self.n0):
+                h1i = Value.add(h1i, Value.mul(h0[j], self.w1[j][i]))
+            h1i = Value.add(h1i, self.b1[i])
+            h1.append(Value.tanh(h1i))
+        h2 = []
+        for i in range(self.n2):
+            h2i = Value(0.0)
+            for j in range(self.n1):
+                h2i = Value.add(h2i, Value.mul(h1[j], self.w2[j][i]))
+            h2i = Value.add(h2i, self.b2[i])
+            h2.append(Value.tanh(h2i))
+        h3 = []
+        for i in range(self.n3):
+            h3i = Value(0.0)
+            for j in range(self.n2):
+                h3i = Value.add(h3i, Value.mul(h2[j], self.w3[j][i]))
+            h3i = Value.add(h3i, self.b3[i])
+            h3.append(Value.tanh(h3i))
+        return h3
 
-    # def loss(self, batch):
-    #     out = 0.0
-    #     for i in range(len(batch)):
-    #         x = []
-    #         for k in range(self.n0):
-    #             x.append(batch[i][k])
-    #         y = []
-    #         for m in range(self.n3):
-    #             y.append(batch[i][self.n0 + m])
-    #         v = self.forward(x)
-    #         for m in range(self.n3):
-    #             out += (v[m] - y[m])**2
-    #     return out / len(batch)
-
-    def train_step(self, batch, lr):
-        # loss
-        L = Value(0.0)
+    def loss(self, batch):
+        out = Value(0.0)
         for b in range(len(batch)):
             x = [Value(batch[b][i]) for i in range(self.n0)]
             y = [Value(batch[b][self.n0 + m]) for m in range(self.n3)]
-            h1 = []
-            for j in range(self.n1):
-                h1i = Value(0.0)
-                for i in range(self.n0):
-                    h1i = Value.add(h1i, Value.mul(x[i], self.w1[i][j]))
-                h1i = Value.add(h1i, self.b1[j])
-                h1.append(Value.tanh(h1i))
-            h2 = []
-            for k in range(self.n2):
-                h2i = Value(0.0)
-                for j in range(self.n1):
-                    h2i = Value.add(h2i, Value.mul(h1[j], self.w2[j][k]))
-                h2i = Value.add(h2i, self.b2[k])
-                h2.append(Value.tanh(h2i))
-            h3 = []
+            v = self.forward(x)
             for m in range(self.n3):
-                h3i = Value(0.0)
-                for k in range(self.n2):
-                    h3i = Value.add(h3i, Value.mul(h2[k], self.w3[k][m]))
-                h3i = Value.add(h3i, self.b3[m])
-                h3.append(Value.tanh(h3i))
-            for m in range(self.n3):
-                L = Value.add(L, Value.pow(Value.sub(h3[m], y[m]), 2))
-        L = Value.mul(L, Value(1.0/len(batch)))
+                out = Value.add(out, Value.pow(Value.sub(v[m], y[m]), 2))
+        out = Value.mul(out, Value(1.0/len(batch)))
+        return out
+
+    def train_step(self, batch, lr):
+        L = self.loss(batch)
         L.backward()
         print(L.data)
-        print(self.w3)
 
     def _rand_array(self, n):
         out = []
