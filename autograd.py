@@ -6,6 +6,8 @@ class Value:
         self.grad = 0.0
         self._prev = _prev
         self._backward = lambda: None
+        self.m = 0.0  # Adam first moment / momentum velocity
+        self.v = 0.0  # Adam second moment
 
     def __repr__(self):
         return f"V({self.data},{self.grad})"
@@ -80,6 +82,49 @@ class Value:
         for node in topo:
             if not node._prev:
                 node.data -= lr * node.grad
+                node.grad = 0.0
+            else:
+                node._backward = lambda: None
+                node._prev = []
+
+    def momentum_step(self, lr, beta=0.9):
+        """SGD with momentum. beta=0 degenerates to plain SGD."""
+        topo = []
+        visited = set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build(child)
+                topo.append(v)
+        build(self)
+        for node in topo:
+            if not node._prev:
+                node.m = beta * node.m + node.grad
+                node.data -= lr * node.m
+                node.grad = 0.0
+            else:
+                node._backward = lambda: None
+                node._prev = []
+
+    def adam_step(self, lr, t, beta1=0.9, beta2=0.999, eps=1e-8):
+        """Adam optimizer step. t = global step counter (starts at 1)."""
+        topo = []
+        visited = set()
+        def build(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build(child)
+                topo.append(v)
+        build(self)
+        for node in topo:
+            if not node._prev:
+                node.m = beta1 * node.m + (1 - beta1) * node.grad
+                node.v = beta2 * node.v + (1 - beta2) * node.grad ** 2
+                m_hat = node.m / (1 - beta1 ** t)
+                v_hat = node.v / (1 - beta2 ** t)
+                node.data -= lr * m_hat / (v_hat ** 0.5 + eps)
                 node.grad = 0.0
             else:
                 node._backward = lambda: None
