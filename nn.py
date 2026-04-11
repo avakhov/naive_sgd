@@ -23,7 +23,8 @@ def gd(model, dataset, lr, epochs):
         if epoch % 10 == 0:
             print(f"epoch={epoch}, loss={L.Data}")
 
-def sgd(model, dataset, lr, epochs, batch_size=8):
+def sgd(model, dataset, lr, epochs, batch_size=8, snapshot_every=100):
+    t_list = [row[0] for row in dataset]
     for epoch in range(epochs):
         shuffled = dataset[:]
         random.shuffle(shuffled)
@@ -38,6 +39,8 @@ def sgd(model, dataset, lr, epochs, batch_size=8):
             batches += 1
         if epoch % 10 == 0:
             print(f"epoch={epoch}, loss={total_loss / batches}")
+        if epoch % snapshot_every == 0 or epoch == epochs - 1:
+            model.snapshots.append((epoch, model.get_graph(t_list)))
 
 class SimpleNN:
     def __init__(self, n0, n1, n2, n3):
@@ -51,6 +54,20 @@ class SimpleNN:
         self.b2 = self._rand_array(n2)
         self.w3 = self._rand_matrix(n2, n3)
         self.b3 = self._rand_array(n3)
+        self.snapshots = []
+
+    def predict(self, t):
+        h0 = [Value(t)]
+        out = self.forward(h0)
+        return out[0].data, out[1].data
+
+    def get_graph(self, t_list):
+        net_x, net_y = [], []
+        for t in t_list:
+            x, y = self.predict(t)
+            net_x.append(x)
+            net_y.append(y)
+        return net_x, net_y
 
     def forward(self, h0):
         h1 = []
@@ -100,8 +117,3 @@ class SimpleNN:
             for j in range(m):
                 out[len(out) - 1].append(Value(random.gauss(0, 1)))
         return out
-
-random.seed(123)
-n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
-data = points("heart", 50)
-sgd(n, data, lr=0.1, epochs=1000)
