@@ -1,21 +1,23 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from typing import Callable, Iterable
+from typing import Callable
 
 
-@dataclass(eq=False)
 class Value:
-    data: float
-    grad: float = 0.0
-    _prev: set["Value"] = field(default_factory=set)
-    _backward: Callable[[], None] = field(default=lambda: None)
-    _op: str = ""
+    def __init__(self, data: float, _prev: set["Value"] = None, _op: str = ""):
+        self.data = data
+        self.grad = 0.0
+        self._prev = _prev if _prev is not None else set()
+        self._backward: Callable[[], None] = lambda: None
+        self._op = _op
 
     def __repr__(self) -> str:
         return f"Value(data={self.data}, grad={self.grad})"
 
     def __hash__(self) -> int:
         return id(self)
+
+    def __eq__(self, other) -> bool:
+        return self is other
 
     @staticmethod
     def _ensure_value(x: float | "Value") -> "Value":
