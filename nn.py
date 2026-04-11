@@ -100,25 +100,20 @@ class SimpleNN:
                 h2i += self.b2[k]
                 h2.append(self.sigma(h2i))
             h3 = []
-            dh3_db3 = [[] for p in range(self.n3)]
+            dh3_db3 = []
             for m in range(self.n3):
                 h3i = 0.0
-                dh3i_db3 = [0.0 for p in range(self.n3)]
-                dh3i_db3[m] = 1
                 for k in range(self.n2):
                     h3i += h2[k]*self.w3[k][m]
                 h3i += self.b3[m]
                 h3.append(self.sigma(h3i))
-                for p in range(self.n3):
-                    dh3_db3[p].append(self.deriv(h3i)*dh3i_db3[p])
+                dh3_db3.append(self.deriv(h3i))
             for m in range(self.n3):
                 L += (h3[m] - y[m])**2
-                for p in range(self.n3):
-                    if p == m:
-                        dL_db3[p] += 2*(h3[m] - y[m])*dh3_db3[p][m]
+                dL_db3[m] += 2*(h3[m] - y[m])*dh3_db3[m]
         L /= len(batch)
-        dL_db3[0] /= len(batch)
-        dL_db3[1] /= len(batch)
+        for m in range(self.n3):
+            dL_db3[m] /= len(batch)
         print(L)
         print(dL_db3)
 
