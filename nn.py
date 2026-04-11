@@ -100,26 +100,22 @@ class SimpleNN:
                 h2i += self.b2[k]
                 h2.append(self.sigma(h2i))
             h3 = []
-            dh3_db3_0 = []
-            dh3_db3_1 = []
+            dh3_db3 = [[] for p in range(self.n3)]
             for m in range(self.n3):
                 h3i = 0.0
-                dh3i_db3_0 = 0.0
-                dh3i_db3_1 = 0.0
+                dh3i_db3 = [0.0 for p in range(self.n3)]
+                dh3i_db3[m] = 1
                 for k in range(self.n2):
                     h3i += h2[k]*self.w3[k][m]
                 h3i += self.b3[m]
-                if m == 0:
-                    dh3i_db3_0 += 1
-                if m == 1:
-                    dh3i_db3_1 += 1
                 h3.append(self.sigma(h3i))
-                dh3_db3_0.append(self.deriv(h3i)*dh3i_db3_0)
-                dh3_db3_1.append(self.deriv(h3i)*dh3i_db3_1)
+                for p in range(self.n3):
+                    dh3_db3[p].append(self.deriv(h3i)*dh3i_db3[p])
             for m in range(self.n3):
                 L += (h3[m] - y[m])**2
-                dL_db3[0] += 2*(h3[m] - y[m])*dh3_db3_0[m]
-                dL_db3[1] += 2*(h3[m] - y[m])*dh3_db3_1[m]
+                for p in range(self.n3):
+                    if p == m:
+                        dL_db3[p] += 2*(h3[m] - y[m])*dh3_db3[p][m]
         L /= len(batch)
         dL_db3[0] /= len(batch)
         dL_db3[1] /= len(batch)
