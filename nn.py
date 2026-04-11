@@ -27,8 +27,6 @@ class SimpleNN:
         self.b2 = self._rand_array(n2)
         self.w3 = self._rand_matrix(n2, n3)
         self.b3 = self._rand_array(n3)
-        self.sigma = math.tanh
-        self.deriv = lambda x: 1 - math.tanh(x)**2
 
     # def forward(self, h0):
     #     h1 = []
@@ -70,59 +68,42 @@ class SimpleNN:
 
     def train_step(self, batch, lr):
         # loss
-        L = 0.0
+        L = Value(0.0)
         for b in range(len(batch)):
-            x = []
-            for i in range(self.n0):
-                x.append(batch[b][i])
-            y = []
-            for m in range(self.n3):
-                y.append(batch[b][self.n0 + m])
-            h0 = x
+            x = [Value(batch[b][i]) for i in range(self.n0)]
+            y = [Value(batch[b][self.n0 + m]) for m in range(self.n3)]
             h1 = []
             for j in range(self.n1):
-                h1i = 0.0
+                h1i = Value(0.0)
                 for i in range(self.n0):
-                    h1i += x[i]*self.w1[i][j]
-                h1i += self.b1[j]
-                h1.append(self.sigma(h1i))
+                    h1i = Value.add(h1i, Value.mul(x[i], self.w1[i][j]))
+                h1i = Value.add(h1i, self.b1[j])
+                h1.append(Value.tanh(h1i))
             h2 = []
             for k in range(self.n2):
-                h2i = 0.0
+                h2i = Value(0.0)
                 for j in range(self.n1):
-                    h2i += h1[j]*self.w2[j][k]
-                h2i += self.b2[k]
-                h2.append(self.sigma(h2i))
+                    h2i = Value.add(h2i, Value.mul(h1[j], self.w2[j][k]))
+                h2i = Value.add(h2i, self.b2[k])
+                h2.append(Value.tanh(h2i))
             h3 = []
             for m in range(self.n3):
-                h3i = 0.0
+                h3i = Value(0.0)
                 for k in range(self.n2):
-                    h3i += h2[k]*self.w3[k][m]
-                h3i += self.b3[m]
-                h3.append(self.sigma(h3i))
+                    h3i = Value.add(h3i, Value.mul(h2[k], self.w3[k][m]))
+                h3i = Value.add(h3i, self.b3[m])
+                h3.append(Value.tanh(h3i))
             for m in range(self.n3):
-                L += (h3[m] - y[m])**2
-        L /= len(batch)
-        print(L)
-
-    def _zero_array(self, n):
-        out = []
-        for i in range(n):
-            out.append(0.0)
-        return out
+                L = Value.add(L, Value.pow(Value.sub(h3[m], y[m]), 2))
+        L = Value.mul(L, Value(1.0/len(batch)))
+        L.backward()
+        print(L.data)
+        print(self.w3)
 
     def _rand_array(self, n):
         out = []
         for i in range(n):
-            out.append(Value(random.gauss(0, 1)).data)
-        return out
-
-    def _zero_matrix(self, n, m):
-        out = []
-        for i in range(n):
-            out.append([])
-            for j in range(m):
-                out[len(out) - 1].append(0.0)
+            out.append(Value(random.gauss(0, 1)))
         return out
 
     def _rand_matrix(self, n, m):
@@ -130,7 +111,7 @@ class SimpleNN:
         for i in range(n):
             out.append([])
             for j in range(m):
-                out[len(out) - 1].append(Value(random.gauss(0, 1)).data)
+                out[len(out) - 1].append(Value(random.gauss(0, 1)))
         return out
 
 random.seed(123)

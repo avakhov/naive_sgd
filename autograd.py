@@ -1,3 +1,5 @@
+import math
+
 class Value:
     def __init__(self, data, _prev=[]):
         self.data = data
@@ -27,10 +29,27 @@ class Value:
         return out
 
     @staticmethod
+    def sub(a, b):
+        out = Value(a.data - b.data, _prev=[a, b])
+        def _backward():
+            a.grad += out.grad
+            b.grad -= out.grad
+        out._backward = _backward
+        return out
+
+    @staticmethod
     def pow(a, n):
         out = Value(pow(a.data, n), _prev=[a])
         def _backward():
             a.grad += out.grad*n*pow(a.data, n-1)
+        out._backward = _backward
+        return out
+
+    @staticmethod
+    def tanh(a):
+        out = Value(math.tanh(a.data), _prev=[a])
+        def _backward():
+            a.grad += out.grad*(1 - math.tanh(a.data)**2)
         out._backward = _backward
         return out
 
