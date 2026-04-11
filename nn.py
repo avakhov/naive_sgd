@@ -8,8 +8,8 @@ def points(fig, n):
     if fig == "heart":
         for t in ta:
             angle = t * 2 * math.pi
-            x = 16 * math.sin(angle) ** 3
-            y = 13 * math.cos(angle) - 5 * math.cos(2 * angle) - 2 * math.cos(3 * angle) - math.cos(4 * angle)
+            x = 0.5 * math.sin(angle) ** 3
+            y = (13 * math.cos(angle) - 5 * math.cos(2 * angle) - 2 * math.cos(3 * angle) - math.cos(4 * angle)) / 30
             out.append([t, x, y])
     else:
         raise ValueError("wrong fig name")
