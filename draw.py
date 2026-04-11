@@ -12,7 +12,7 @@ x = [row[1] for row in dataset]
 y = [row[2] for row in dataset]
 
 n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
-sgd(n, dataset, lr=0.1, epochs=1000, batch_size=8, snapshot_every=100)
+sgd(n, dataset, lr=0.1, epochs=200, batch_size=8, snapshot_every=30)
 
 # graph
 plt.figure(figsize=(6.5, 6.5), dpi=100)

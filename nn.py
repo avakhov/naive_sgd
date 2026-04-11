@@ -56,19 +56,6 @@ class SimpleNN:
         self.b3 = self._rand_array(n3)
         self.snapshots = []
 
-    def predict(self, t):
-        h0 = [Value(t)]
-        out = self.forward(h0)
-        return out[0].data, out[1].data
-
-    def get_graph(self, t_list):
-        net_x, net_y = [], []
-        for t in t_list:
-            x, y = self.predict(t)
-            net_x.append(x)
-            net_y.append(y)
-        return net_x, net_y
-
     def forward(self, h0):
         h1 = []
         for i in range(self.n1):
@@ -103,6 +90,19 @@ class SimpleNN:
                 out = Value.add(out, Value.pow(Value.sub(v[m], y[m]), 2))
         out = Value.mul(out, Value(1.0/len(batch)))
         return out
+
+    def predict(self, t):
+        h0 = [Value(t)]
+        out = self.forward(h0)
+        return out[0].data, out[1].data
+
+    def get_graph(self, t_list):
+        net_x, net_y = [], []
+        for t in t_list:
+            x, y = self.predict(t)
+            net_x.append(x)
+            net_y.append(y)
+        return net_x, net_y
 
     def _rand_array(self, n):
         out = []

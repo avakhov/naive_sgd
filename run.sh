@@ -10,4 +10,4 @@ if [ "$1" = "b" ]; then
 fi
 
 set -x
-docker run -it -v`pwd`:/w -w /w network python draw.py
+docker run -it --rm --name pd -v`pwd`:/w -w /w network python draw.py
