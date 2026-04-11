@@ -15,24 +15,29 @@ def points(fig, n):
         raise ValueError("wrong fig name")
     return out
 
-def gd(model, batch, lr, epochs):
+def gd(model, dataset, lr, epochs):
     for epoch in range(epochs):
-        L = model.loss(batch)
+        L = model.loss(dataset)
         L.backward()
         L.step(lr)
         if epoch % 10 == 0:
             print(f"epoch={epoch}, loss={L.Data}")
 
-def sgd(model, batch, lr, epochs):
+def sgd(model, dataset, lr, epochs, batch_size=8):
     for epoch in range(epochs):
-        sample = [random.choice(batch)]
-        L = model.loss(sample)
-        L.backward()
-        L.step(lr)
+        shuffled = dataset[:]
+        random.shuffle(shuffled)
+        total_loss = 0.0
+        batches = 0
+        for i in range(0, len(shuffled), batch_size):
+            batch = shuffled[i:i + batch_size]
+            L = model.loss(batch)
+            L.backward()
+            L.step(lr)
+            total_loss += L.data
+            batches += 1
         if epoch % 10 == 0:
-            print(f"epoch={epoch}")
-    L = model.loss(batch)
-    print(f"loss={L.data}")
+            print(f"epoch={epoch}, loss={total_loss / batches}")
 
 class SimpleNN:
     def __init__(self, n0, n1, n2, n3):
@@ -99,4 +104,4 @@ class SimpleNN:
 random.seed(123)
 n = SimpleNN(n0=1, n1=20, n2=15, n3=2)
 data = points("heart", 50)
-sgd(n, data, lr=0.1, epochs=10000)
+sgd(n, data, lr=0.1, epochs=1000)
