@@ -81,3 +81,6 @@ class Value:
             if not node._prev:
                 node.data -= lr * node.grad
                 node.grad = 0.0
+            else:
+                node._backward = lambda: None
+                node._prev = []

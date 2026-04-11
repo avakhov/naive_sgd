@@ -115,5 +115,5 @@ class SimpleNN:
         for i in range(n):
             out.append([])
             for j in range(m):
-                out[len(out) - 1].append(Value(random.gauss(0, 1)))
+                out[len(out) - 1].append(Value(random.gauss(0, 1.0 / math.sqrt(n))))
         return out
