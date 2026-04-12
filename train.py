@@ -7,10 +7,10 @@ random.seed(123)
 
 os.makedirs("out", exist_ok=True)
 
-dataset = points("astroid", 100)
+dataset = points("circle", 20)
 
-n = SimpleNN(n0=1, n1=15, n2=15, n3=2)
-sgd(n, dataset, lr=0.1, epochs=3000)
+n = SimpleNN(n0=1, n1=10, n2=5, n3=2)
+sgd(n, dataset, lr=0.1, epochs=1000, batch_size=8)
 
 target_x = [row[1] for row in dataset]
 target_y = [row[2] for row in dataset]

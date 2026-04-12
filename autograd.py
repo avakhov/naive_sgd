@@ -46,6 +46,41 @@ class Value:
         return out
 
     @staticmethod
+    def relu(a):
+        out = Value(max(0.0, a.data), _prev=[a])
+        def _backward():
+            a.grad += out.grad * (1.0 if a.data > 0 else 0.0)
+        out._backward = _backward
+        return out
+
+    @staticmethod
+    def elu(a, alpha=1.0):
+        v = a.data if a.data > 0 else alpha * (math.exp(a.data) - 1)
+        out = Value(v, _prev=[a])
+        def _backward():
+            a.grad += out.grad * (1.0 if a.data > 0 else alpha * math.exp(a.data))
+        out._backward = _backward
+        return out
+
+    @staticmethod
+    def silu(a):
+        sig = 1.0 / (1.0 + math.exp(-a.data))
+        out = Value(a.data * sig, _prev=[a])
+        def _backward():
+            sig = 1.0 / (1.0 + math.exp(-a.data))
+            a.grad += out.grad * (sig + a.data * sig * (1.0 - sig))
+        out._backward = _backward
+        return out
+
+    @staticmethod
+    def sin(a):
+        out = Value(math.sin(a.data), _prev=[a])
+        def _backward():
+            a.grad += out.grad * math.cos(a.data)
+        out._backward = _backward
+        return out
+
+    @staticmethod
     def tanh(a):
         out = Value(math.tanh(a.data), _prev=[a])
         def _backward():

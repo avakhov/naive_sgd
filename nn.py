@@ -48,8 +48,8 @@ def points(fig, n):
         raise ValueError("wrong fig name")
     return out
 
-def gd(model, dataset, lr, epochs, num_snapshots=20):
-    t_list = [row[0] for row in dataset]
+def gd(model, dataset, lr, epochs, num_snapshots=20, snap_points=100):
+    t_list = [i / snap_points for i in range(snap_points + 1)]
     snap_epochs = {
         i * (epochs - 1) // (num_snapshots - 1)
         for i in range(num_snapshots)
@@ -64,8 +64,8 @@ def gd(model, dataset, lr, epochs, num_snapshots=20):
             model.snapshots.append((epoch, model.get_graph(t_list)))
 
 
-def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20):
-    t_list = [row[0] for row in dataset]
+def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20, snap_points=100):
+    t_list = [i / snap_points for i in range(snap_points + 1)]
     snap_epochs = {
         i * (epochs - 1) // (num_snapshots - 1)
         for i in range(num_snapshots)
