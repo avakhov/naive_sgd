@@ -26,50 +26,6 @@ def gd(model, dataset, lr, epochs, snapshot_every=100):
         if epoch % snapshot_every == 0 or epoch == epochs - 1:
             model.snapshots.append((epoch, model.get_graph(t_list)))
 
-def sgd_momentum(model, dataset, lr=0.1, epochs=500, batch_size=8, beta=0.9,
-                 lr_min=0.01, snapshot_every=100):
-    t_list = [row[0] for row in dataset]
-    for epoch in range(epochs):
-        # cosine annealing: lr плавно падает от lr до lr_min
-        cos = math.cos(math.pi * epoch / epochs)
-        cur_lr = lr_min + 0.5 * (lr - lr_min) * (1 + cos)
-
-        shuffled = dataset[:]
-        random.shuffle(shuffled)
-        total_loss = 0.0
-        batches = 0
-        for i in range(0, len(shuffled), batch_size):
-            batch = shuffled[i:i + batch_size]
-            L = model.loss(batch)
-            L.backward()
-            L.momentum_step(cur_lr, beta)
-            total_loss += L.data
-            batches += 1
-        if epoch % 10 == 0:
-            print(f"epoch={epoch}, lr={cur_lr:.4f}, loss={total_loss / batches:.6f}")
-        if epoch % snapshot_every == 0 or epoch == epochs - 1:
-            model.snapshots.append((epoch, model.get_graph(t_list)))
-
-def adam(model, dataset, lr=0.01, epochs=500, batch_size=8, snapshot_every=100):
-    t_list = [row[0] for row in dataset]
-    step = 0
-    for epoch in range(epochs):
-        shuffled = dataset[:]
-        random.shuffle(shuffled)
-        total_loss = 0.0
-        batches = 0
-        for i in range(0, len(shuffled), batch_size):
-            batch = shuffled[i:i + batch_size]
-            step += 1
-            L = model.loss(batch)
-            L.backward()
-            L.adam_step(lr, step)
-            total_loss += L.data
-            batches += 1
-        if epoch % 10 == 0:
-            print(f"epoch={epoch}, loss={total_loss / batches}")
-        if epoch % snapshot_every == 0 or epoch == epochs - 1:
-            model.snapshots.append((epoch, model.get_graph(t_list)))
 
 def sgd(model, dataset, lr, epochs, batch_size=8, num_snapshots=20):
     t_list = [row[0] for row in dataset]

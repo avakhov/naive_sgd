@@ -1,13 +1,13 @@
 import random
 import json
-from nn import SimpleNN, points, sgd_momentum, sgd, gd, adam
+from nn import SimpleNN, points, sgd, gd
 
 random.seed(123)
 
-dataset = points("heart", 200)
+dataset = points("heart", 10)
 
 n = SimpleNN(n0=1, n1=20, n2=20, n3=2)
-sgd(n, dataset, lr=0.3, epochs=100, snapshot_every=30)
+sgd(n, dataset, lr=0.1, epochs=100, snapshot_every=30)
 
 target_x = [row[1] for row in dataset]
 target_y = [row[2] for row in dataset]
