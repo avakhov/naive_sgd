@@ -18,7 +18,8 @@ for i, snap in enumerate(snapshots):
     alpha = 0.1 + 0.9 * (i / (num_snapshots - 1)) if num_snapshots > 1 else 1.0
     color = 'green' if is_last else 'blue'
     label = f'epoch {snap["epoch"]}' if is_last else None
-    plt.plot(snap["x"], snap["y"], color=color, alpha=alpha, label=label)
+    lw = 3.0 if is_last else 1.0
+    plt.plot(snap["x"], snap["y"], color=color, alpha=alpha, label=label, linewidth=lw)
 
 plt.axis('equal')
 plt.legend()

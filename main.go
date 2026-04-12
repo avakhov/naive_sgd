@@ -233,12 +233,19 @@ func heartPoints(n int) []Point {
 
 // ---------- training ----------
 
-func sgd(nn *SimpleNN, rng *rand.Rand, dataset []Point, lr float64, epochs, batchSize, snapshotEvery int) {
+func sgd(nn *SimpleNN, rng *rand.Rand, dataset []Point, lr float64, epochs, batchSize, numSnapshots int) {
 	tList := make([]float64, len(dataset))
 	for i, p := range dataset {
 		tList[i] = p[0]
 	}
 	shuffled := make([]Point, len(dataset))
+
+	// precompute the set of epochs to snapshot
+	snapEpochs := make(map[int]bool, numSnapshots)
+	for i := 0; i < numSnapshots; i++ {
+		e := i * (epochs - 1) / (numSnapshots - 1)
+		snapEpochs[e] = true
+	}
 
 	for epoch := 0; epoch < epochs; epoch++ {
 		copy(shuffled, dataset)
@@ -260,7 +267,7 @@ func sgd(nn *SimpleNN, rng *rand.Rand, dataset []Point, lr float64, epochs, batc
 		if epoch%10 == 0 {
 			fmt.Printf("epoch=%d, loss=%.6f\n", epoch, totalLoss/float64(batches))
 		}
-		if epoch%snapshotEvery == 0 || epoch == epochs-1 {
+		if snapEpochs[epoch] {
 			nn.addSnapshot(epoch, tList)
 		}
 	}
@@ -270,11 +277,11 @@ func sgd(nn *SimpleNN, rng *rand.Rand, dataset []Point, lr float64, epochs, batc
 
 func main() {
 	rng := rand.New(rand.NewSource(123))
-	dataset := heartPoints(200)
+	dataset := heartPoints(120)
 	nn := NewSimpleNN(rng, 1, 20, 20, 2)
 
 	start := time.Now()
-	sgd(nn, rng, dataset, 0.3, 100, 8, 30)
+	sgd(nn, rng, dataset, 0.3, 3000, 32, 20)
 	fmt.Printf("elapsed: %v\n", time.Since(start))
 
 	targetX := make([]float64, len(dataset))
@@ -305,8 +312,8 @@ func main() {
 		out.Snapshots[i] = snapshotJSON{s.Epoch, s.X, s.Y}
 	}
 
-	f, _ := os.Create("output_go.json")
+	f, _ := os.Create("output.json")
 	defer f.Close()
 	json.NewEncoder(f).Encode(out)
-	fmt.Println("output_go.json saved.")
+	fmt.Println("output.json saved.")
 }
