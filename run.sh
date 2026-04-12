@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex
 rm -f graph.png
-python train.py
-docker build -t naive-sgd-draw .
-docker run --rm -v "$PWD:/app" naive-sgd-draw
+docker build -t naive-sgd .
+docker run --rm -v "$PWD:/app" naive-sgd python train2.py
+docker run --rm -v "$PWD:/app" naive-sgd python draw.py
