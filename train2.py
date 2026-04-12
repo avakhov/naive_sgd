@@ -5,12 +5,10 @@ import torch.nn as nn
 from figures import points
 
 torch.manual_seed(123)
-
 os.makedirs("out", exist_ok=True)
 
 SNAP_POINTS = 100
 NUM_SNAPSHOTS = 20
-
 
 class SimpleNN(nn.Module):
     def __init__(self, n0, n1, n2, n3):
@@ -33,11 +31,11 @@ dataset = points("circle", 20)
 t_data = torch.tensor([[row[0]] for row in dataset], dtype=torch.float32)
 xy_data = torch.tensor([[row[1], row[2]] for row in dataset], dtype=torch.float32)
 
+epochs = 50000
 model = SimpleNN(n0=1, n1=10, n2=5, n3=2)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=1000)
-
-epochs = 1000
 snap_epochs = {i * (epochs - 1) // (NUM_SNAPSHOTS - 1) for i in range(NUM_SNAPSHOTS)}
 t_snap = torch.tensor([[i / SNAP_POINTS] for i in range(SNAP_POINTS + 1)], dtype=torch.float32)
 

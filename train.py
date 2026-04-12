@@ -5,7 +5,6 @@ from nn import SimpleNN, sgd, gd
 from figures import points
 
 random.seed(123)
-
 os.makedirs("out", exist_ok=True)
 
 dataset = points("circle", 20)
