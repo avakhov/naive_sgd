@@ -18,8 +18,8 @@ plt.plot(target["x"], target["y"], color='red', label='target')
 num_snapshots = len(snapshots)
 for i, snap in enumerate(snapshots):
     is_last = i == num_snapshots - 1
-    alpha = 0.1 + 0.9 * (i / (num_snapshots - 1)) if num_snapshots > 1 else 1.0
-    color = 'green' if is_last else 'blue'
+    alpha = 1.0 if is_last else (0.2 + 0.5 * (i / (num_snapshots - 1)) if num_snapshots > 1 else 0.7)
+    color = 'green' if is_last else (0.2, 0.4, 0.9)
     label = f'epoch {snap["epoch"]}' if is_last else None
     lw = 3.0 if is_last else 1.0
     plt.plot(snap["x"], snap["y"], color=color, alpha=alpha, label=label, linewidth=lw)
