@@ -15,19 +15,23 @@ def points(fig, n):
         raise ValueError("wrong fig name")
     return out
 
-def gd(model, dataset, lr, epochs, snapshot_every=100):
+def gd(model, dataset, lr, epochs, num_snapshots=20):
     t_list = [row[0] for row in dataset]
+    snap_epochs = {
+        i * (epochs - 1) // (num_snapshots - 1)
+        for i in range(num_snapshots)
+    }
     for epoch in range(epochs):
         L = model.loss(dataset)
         L.backward()
         L.step(lr)
         if epoch % 10 == 0:
             print(f"epoch={epoch}, loss={L.data}")
-        if epoch % snapshot_every == 0 or epoch == epochs - 1:
+        if epoch in snap_epochs:
             model.snapshots.append((epoch, model.get_graph(t_list)))
 
 
-def sgd(model, dataset, lr, epochs, batch_size=8, num_snapshots=20):
+def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20):
     t_list = [row[0] for row in dataset]
     snap_epochs = {
         i * (epochs - 1) // (num_snapshots - 1)

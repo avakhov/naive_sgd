@@ -1,13 +1,16 @@
+import os
 import random
 import json
 from nn import SimpleNN, points, sgd, gd
 
 random.seed(123)
 
-dataset = points("heart", 10)
+os.makedirs("out", exist_ok=True)
+
+dataset = points("heart", 100)
 
 n = SimpleNN(n0=1, n1=20, n2=20, n3=2)
-sgd(n, dataset, lr=0.1, epochs=100, snapshot_every=30)
+sgd(n, dataset, lr=0.3, epochs=100)
 
 target_x = [row[1] for row in dataset]
 target_y = [row[2] for row in dataset]
@@ -20,7 +23,7 @@ output = {
     ],
 }
 
-with open("output.json", "w") as f:
+with open("out/output.json", "w") as f:
     json.dump(output, f)
 
-print("output.json saved.")
+print("out/output.json saved.")

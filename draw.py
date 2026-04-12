@@ -1,9 +1,12 @@
+import os
 import json
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-with open("output.json") as f:
+os.makedirs("out", exist_ok=True)
+
+with open("out/output.json") as f:
     data = json.load(f)
 
 target = data["target"]
@@ -24,6 +27,6 @@ for i, snap in enumerate(snapshots):
 plt.axis('equal')
 plt.legend()
 plt.grid()
-file = 'graph.png'
+file = 'out/graph.png'
 plt.savefig(file)
 print(file + " saved.")
