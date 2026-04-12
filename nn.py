@@ -88,11 +88,12 @@ def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20):
             model.snapshots.append((epoch, model.get_graph(t_list)))
 
 class SimpleNN:
-    def __init__(self, n0, n1, n2, n3):
+    def __init__(self, n0, n1, n2, n3, sigma=Value.tanh):
         self.n0 = n0
         self.n1 = n1
         self.n2 = n2
         self.n3 = n3
+        self.sigma = sigma
         self.w1 = self._rand_matrix(n0, n1)
         self.b1 = self._rand_array(n1)
         self.w2 = self._rand_matrix(n1, n2)
@@ -108,21 +109,21 @@ class SimpleNN:
             for j in range(self.n0):
                 h1i = Value.add(h1i, Value.mul(h0[j], self.w1[j][i]))
             h1i = Value.add(h1i, self.b1[i])
-            h1.append(Value.tanh(h1i))
+            h1.append(self.sigma(h1i))
         h2 = []
         for i in range(self.n2):
             h2i = Value(0.0)
             for j in range(self.n1):
                 h2i = Value.add(h2i, Value.mul(h1[j], self.w2[j][i]))
             h2i = Value.add(h2i, self.b2[i])
-            h2.append(Value.tanh(h2i))
+            h2.append(self.sigma(h2i))
         h3 = []
         for i in range(self.n3):
             h3i = Value(0.0)
             for j in range(self.n2):
                 h3i = Value.add(h3i, Value.mul(h2[j], self.w3[j][i]))
             h3i = Value.add(h3i, self.b3[i])
-            h3.append(Value.tanh(h3i))
+            h3.append(self.sigma(h3i))
         return h3
 
     def loss(self, batch):
