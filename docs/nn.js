@@ -36,24 +36,27 @@ class SimpleNN {
         const h1 = [];
         for (let i = 0; i < this.n1; i++) {
             let h1i = 0.0;
-            for (let j = 0; j < this.n0; j++)
+            for (let j = 0; j < this.n0; j++) {
                 h1i += h0[j] * this.w1[j][i];
+            }
             h1i += this.b1[i];
             h1.push(Math.tanh(h1i));
         }
         const h2 = [];
         for (let i = 0; i < this.n2; i++) {
             let h2i = 0.0;
-            for (let j = 0; j < this.n1; j++)
+            for (let j = 0; j < this.n1; j++) {
                 h2i += h1[j] * this.w2[j][i];
+            }
             h2i += this.b2[i];
             h2.push(Math.tanh(h2i));
         }
         const h3 = [];
         for (let i = 0; i < this.n3; i++) {
             let h3i = 0.0;
-            for (let j = 0; j < this.n2; j++)
+            for (let j = 0; j < this.n2; j++) {
                 h3i += h2[j] * this.w3[j][i];
+            }
             h3i += this.b3[i];
             h3.push(Math.tanh(h3i));
         }
@@ -74,65 +77,77 @@ class SimpleNN {
             const y = Array.from({ length: this.n3 }, (_, m) => batch[b][this.n0 + m]);
             const [h1, h2, h3] = this.forward(x);
             // loss
-            for (let m = 0; m < this.n3; m++)
+            for (let m = 0; m < this.n3; m++) {
                 L += (h3[m] - y[m]) ** 2 / N;
+            }
             // layer 3
             const dz3 = [];
-            for (let m = 0; m < this.n3; m++)
+            for (let m = 0; m < this.n3; m++) {
                 dz3.push(2.0 * (h3[m] - y[m]) * (1 - h3[m]**2));
+            }
             for (let m = 0; m < this.n3; m++) {
                 dL_b3[m] += dz3[m] / N;
-                for (let j = 0; j < this.n2; j++)
+                for (let j = 0; j < this.n2; j++) {
                     dL_w3[j][m] += dz3[m] * h2[j] / N;
+                }
             }
             // layer 2
             const dh2 = [];
             for (let j = 0; j < this.n2; j++) {
                 let dh2j = 0.0;
-                for (let m = 0; m < this.n3; m++)
+                for (let m = 0; m < this.n3; m++) {
                     dh2j += dz3[m] * this.w3[j][m];
+                }
                 dh2.push(dh2j);
             }
             const dz2 = [];
-            for (let i = 0; i < this.n2; i++)
+            for (let i = 0; i < this.n2; i++) {
                 dz2.push(dh2[i] * (1 - h2[i]**2));
+            }
             for (let i = 0; i < this.n2; i++) {
                 dL_b2[i] += dz2[i] / N;
-                for (let j = 0; j < this.n1; j++)
+                for (let j = 0; j < this.n1; j++) {
                     dL_w2[j][i] += dz2[i] * h1[j] / N;
+                }
             }
             // layer 1
             const dh1 = [];
             for (let j = 0; j < this.n1; j++) {
                 let dh1j = 0.0;
-                for (let i = 0; i < this.n2; i++)
+                for (let i = 0; i < this.n2; i++) {
                     dh1j += dz2[i] * this.w2[j][i];
+                }
                 dh1.push(dh1j);
             }
             const dz1 = [];
-            for (let k = 0; k < this.n1; k++)
+            for (let k = 0; k < this.n1; k++) {
                 dz1.push(dh1[k] * (1 - h1[k]**2));
+            }
             for (let k = 0; k < this.n1; k++) {
                 dL_b1[k] += dz1[k] / N;
-                for (let j = 0; j < this.n0; j++)
+                for (let j = 0; j < this.n0; j++) {
                     dL_w1[j][k] += dz1[k] * x[j] / N;
+                }
             }
         }
         // SGD step
         for (let k = 0; k < this.n1; k++) {
             this.b1[k] -= lr * dL_b1[k];
-            for (let j = 0; j < this.n0; j++)
+            for (let j = 0; j < this.n0; j++) {
                 this.w1[j][k] -= lr * dL_w1[j][k];
+            }
         }
         for (let i = 0; i < this.n2; i++) {
             this.b2[i] -= lr * dL_b2[i];
-            for (let j = 0; j < this.n1; j++)
+            for (let j = 0; j < this.n1; j++) {
                 this.w2[j][i] -= lr * dL_w2[j][i];
+            }
         }
         for (let m = 0; m < this.n3; m++) {
             this.b3[m] -= lr * dL_b3[m];
-            for (let j = 0; j < this.n2; j++)
+            for (let j = 0; j < this.n2; j++) {
                 this.w3[j][m] -= lr * dL_w3[j][m];
+            }
         }
         return L;
     }
@@ -147,14 +162,25 @@ class SimpleNN {
         return [netX, netY];
     }
 
-    _zeroArray(n) { return new Array(n).fill(0.0); }
-    _zeroMatrix(n, m) { return Array.from({ length: n }, () => new Array(m).fill(0.0)); }
+    _zeroArray(n) {
+      return new Array(n).fill(0.0);
+    }
+
+    _zeroMatrix(n, m) {
+      return Array.from({ length: n }, () => {
+        return new Array(m).fill(0.0);
+      });
+    }
     _randArray(n) {
-        return Array.from({ length: n }, () => this.random.gauss(0, 1.0 / Math.sqrt(n)));
+        return Array.from({ length: n }, () => {
+          return this.random.gauss(0, 1.0 / Math.sqrt(n))
+        });
     }
     _randMatrix(n, m) {
-        return Array.from({ length: n }, () =>
-            Array.from({ length: m }, () => this.random.gauss(0, 1.0 / Math.sqrt(n)))
-        );
+        return Array.from({ length: n }, () => {
+            return Array.from({ length: m }, () => {
+              return this.random.gauss(0, 1.0 / Math.sqrt(n))
+            })
+        });
     }
 }
