@@ -6,6 +6,7 @@ function App() {
   const [lr, setLr] = useState('0.1');
   const [epochs, setEpochs] = useState('500');
   const [batchSize, setBatchSize] = useState('8');
+  const [shuffle, setShuffle] = useState('on');
   const [status, setStatus] = useState('idle');   // idle | training | done
   const [currentEpoch, setCurrentEpoch] = useState(0);
   const [currentLoss, setCurrentLoss] = useState(null);
@@ -55,7 +56,7 @@ function App() {
     setCurrentLoss(null);
     setStatus('training');
 
-    const gen = sgd(model, dataset, lrVal, ep, bs, snapPoints);
+    const gen = sgd(model, dataset, lrVal, ep, bs, snapPoints, shuffle === 'on');
     genRef.current = gen;
 
     const steps = 16;
@@ -148,6 +149,13 @@ function App() {
           e('label', null, 'Batch size'),
           e('input', { type: 'number', value: batchSize, onChange: ev => setBatchSize(ev.target.value),
             step: '1', min: '1', max: '100', disabled: isTraining })
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Shuffle'),
+          e('select', { value: shuffle, onChange: ev => setShuffle(ev.target.value), disabled: isTraining },
+            e('option', { value: 'on' }, 'on'),
+            e('option', { value: 'off' }, 'off')
+          )
         ),
         e('button', { className: 'btn btn-train', onClick: startTraining, disabled: isTraining },
           isTraining ? 'training…' : status === 'done' ? 'train again' : 'train'

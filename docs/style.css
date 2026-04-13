@@ -31,8 +31,7 @@ h1 {
   width: 180px;
   flex-shrink: 0;
 }
-.field { margin-bottom: 12px; }
-.field label {
+.field { margin-bottom: 12px; }.field label {
   display: block;
   font-size: 0.7rem;
   text-transform: uppercase;
