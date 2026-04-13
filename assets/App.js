@@ -9,7 +9,7 @@ function App() {
   const [epochs, setEpochs] = useState('500');
   const [batchSize, setBatchSize] = useState('8');
   const [seed, setSeed] = useState('123');
-  const [speedIdx, setSpeedIdx] = useState(1);
+ const [speedIdx, setSpeedIdx] = useState(1);
   const [status, setStatus] = useState('idle');   // idle | training | done
   const [currentEpoch, setCurrentEpoch] = useState(0);
   const [currentLoss, setCurrentLoss] = useState(null);
@@ -178,7 +178,7 @@ function App() {
       // canvas area
       e('div', { className: 'canvas-area' },
         e('div', { className: 'canvas-label' }, 'figure space'),
-        e('canvas', { ref: mainCanvas, width: 560, height: 480, style: { marginBottom: 14 } }),
+        e('canvas', { ref: mainCanvas, width: 560, height: 320, style: { marginBottom: 14 } }),
         e('div', { className: 'canvas-label' }, 'loss curve'),
         e('canvas', { ref: lossCanvas, width: 560, height: 100 }),
         e('div', { className: 'legend' },
