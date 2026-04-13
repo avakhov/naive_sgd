@@ -130,10 +130,10 @@ class SimpleNN:
                 dh2j = 0.0
                 for m in range(self.n3):
                     dh2j += dz3[m] * self.w3[j][m]
-                d2h.append(dh2j)
+                dh2.append(dh2j)
             dz2 = []
             for i in range(self.n2):
-                dz2.append(dh2[i] * (1.0 - h2[i] ** 2))
+                dz2.append(dh2[i] * self.deriv(h2[i]))
             for i in range(self.n2):
                 dL_b2[i] += dz2[i]
                 for j in range(self.n1):
@@ -147,7 +147,7 @@ class SimpleNN:
                 dh1.append(dh1j)
             dz1 = []
             for k in range(self.n1):
-                dz1.append(dh1[k] * (1.0 - h1[k] ** 2))
+                dz1.append(dh1[k] * self.deriv(h1[k]))
             for k in range(self.n1):
                 dL_b1[k] += dz1[k]
                 for j in range(self.n0):
