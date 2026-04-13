@@ -20,6 +20,11 @@ function App() {
   const lossHistoryRef = useRef([]);
   const netCurveRef = useRef(null);
 
+  // reset when figure changes after training
+  useEffect(() => {
+    if (status === 'done') { reset(); return; }
+  }, [fig]);
+
   // initial draw when figure changes (idle state)
   useEffect(() => {
     if (status !== 'idle') return;
