@@ -1,4 +1,4 @@
-const VIEWPORT = 1.35;  // show [-V, V] x [-V, V]
+const VIEWPORT = 0.69;  // show [-V, V] x [-V, V]
 const SNAP_POINTS = 100;
 const NUM_SNAPSHOTS = 20;
 

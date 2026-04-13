@@ -1,11 +1,11 @@
 // ---- drawing helpers ----
 
 function toCanvas(x, y, w, h) {
-  const pad = 28;
+  const pad = 16;
   const size = Math.min(w, h) - 2 * pad;
   const range = VIEWPORT * 2;
-  const cx = (w - size) / 2 + pad + (x + VIEWPORT) / range * size;
-  const cy = (h - size) / 2 + pad + (VIEWPORT - y) / range * size;
+  const cx = (w - size) / 2 + (x + VIEWPORT) / range * size;
+  const cy = (h - size) / 2 + (VIEWPORT - y) / range * size;
   return [cx, cy];
 }
 
