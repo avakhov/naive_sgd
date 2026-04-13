@@ -16,9 +16,7 @@ def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20, snap_points
         batches = 0
         for i in range(0, len(shuffled), batch_size):
             batch = shuffled[i:i + batch_size]
-            L = model.loss(batch)
-            L.backward()
-            L.step(lr)
+            L = model.train(batch, lr)
             total_loss += L.data
             batches += 1
         if epoch % 10 == 0:
@@ -75,6 +73,12 @@ class SimpleNN:
                 out = Value.add(out, Value.pow(Value.sub(v[m], y[m]), 2))
         out = Value.mul(out, Value(1.0/len(batch)))
         return out
+
+    def train(self, batch, lr)
+        L = self.loss(batch)
+        L.backward()
+        L.step(lr)
+        return L
 
     def predict(self, t):
         h0 = [Value(t)]
