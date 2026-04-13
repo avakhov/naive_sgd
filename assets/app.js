@@ -1,5 +1,3 @@
-// ---- main app ----
-
 const { useState, useRef, useEffect, useCallback } = React;
 const e = React.createElement;
 
