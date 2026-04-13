@@ -1,12 +1,11 @@
 // ---- drawing helpers ----
-const VIEWPORT = 320.0/560.0;
 
 function toCanvas(x, y, w, h) {
   const pad = 16;
   const size = Math.min(w, h) - 2 * pad;
-  const range = VIEWPORT * 2;
-  const cx = (w - size) / 2 + (x + VIEWPORT) / range * size;
-  const cy = (h - size) / 2 + (VIEWPORT - y) / range * size;
+  const v = 320.0 / 560.0;
+  const cx = (w - size) / 2 + (x + v) / (v * 2) * size;
+  const cy = (h - size) / 2 + (v - y) / (v * 2) * size;
   return [cx, cy];
 }
 
@@ -17,8 +16,8 @@ function drawFigure(ctx, dataset, netX, netY, w, h) {
   ctx.strokeStyle = '#f0f0f0';
   ctx.lineWidth = 1;
   for (let v = -1; v <= 1; v += 0.5) {
-    const [x0] = toCanvas(v, -VIEWPORT, w, h);
-    const [, y0] = toCanvas(-VIEWPORT, v, w, h);
+    const [x0] = toCanvas(v, -1, w, h);
+    const [, y0] = toCanvas(-1, v, w, h);
     ctx.beginPath(); ctx.moveTo(x0, 0); ctx.lineTo(x0, h); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0, y0); ctx.lineTo(w, y0); ctx.stroke();
   }

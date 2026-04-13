@@ -1,4 +1,4 @@
-const { useState, useRef, useEffect, useCallback } = React;
+const { useState, useRef, useEffect } = React;
 const e = React.createElement;
 
 function App() {
@@ -18,7 +18,6 @@ function App() {
   const genRef = useRef(null);
   const rafRef = useRef(null);
   const lossHistoryRef = useRef([]);
-  const netCurveRef = useRef(null);
 
   // reset when figure changes after training
   useEffect(() => {
@@ -52,7 +51,6 @@ function App() {
     const model = new SimpleNN(1, 20, 20, 2);
     modelRef.current = model;
     lossHistoryRef.current = [];
-    netCurveRef.current = null;
     setCurrentEpoch(0);
     setCurrentLoss(null);
     setStatus('training');
@@ -86,7 +84,6 @@ function App() {
       // draw current network output
       const tList = Array.from({ length: snapPoints + 1 }, (_, i) => i / snapPoints);
       const [netX, netY] = model.getGraph(tList);
-      netCurveRef.current = { netX, netY };
 
       drawFigure(mainCtx, datasetRef.current, netX, netY, w, h);
       drawLoss(lctx, lossHistoryRef.current, ep, lw, lh);
@@ -108,7 +105,6 @@ function App() {
     genRef.current = null;
     modelRef.current = null;
     lossHistoryRef.current = [];
-    netCurveRef.current = null;
     setStatus('idle');
     setCurrentEpoch(0);
     setCurrentLoss(null);
