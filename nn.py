@@ -74,17 +74,17 @@ class SimpleNN:
         return out
 
     def train(self, batch, lr):
-        print("train")
-        exit()
-        dL_w1 = self._rand_matrix(n0, n1)
-        dL_b1 = self._rand_array(n1)
-        dL_w2 = self._rand_matrix(n1, n2)
-        dL_b2 = self._rand_array(n2)
-        dL_w3 = self._rand_matrix(n2, n3)
-        dL_b3 = self._rand_array(n3)
-        L = self.loss(batch)
-        L.backward()
-        L.step(lr)
+        dL_w1 = self._zero_matrix(n0, n1)
+        dL_b1 = self._zero_array(n1)
+        dL_w2 = self._zero_matrix(n1, n2)
+        dL_b2 = self._zero_array(n2)
+        dL_w3 = self._zero_matrix(n2, n3)
+        dL_b3 = self._zero_array(n3)
+        for b in range(len(batch)):
+            x = [batch[b][i] for i in range(self.n0)]
+            y = [batch[b][self.n0 + m] for m in range(self.n3)]
+            # TODO: calc dL_b3
+        L = 0.0
         return L
 
     def get_graph(self, t_list):
@@ -94,6 +94,20 @@ class SimpleNN:
             net_x.append(x)
             net_y.append(y)
         return net_x, net_y
+
+    def _zero_array(self, n):
+        out = []
+        for i in range(n):
+            out.append(0.0)
+        return out
+
+    def _zero_matrix(self, n, m):
+        out = []
+        for i in range(n):
+            out.append([])
+            for j in range(m):
+                out[len(out) - 1].append(0.0)
+        return out
 
     def _rand_array(self, n):
         out = []
