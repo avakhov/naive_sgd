@@ -1,4 +1,5 @@
 // ---- drawing helpers ----
+const VIEWPORT = 320.0/560.0;
 
 function toCanvas(x, y, w, h) {
   const pad = 16;

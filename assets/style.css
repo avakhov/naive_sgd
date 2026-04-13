@@ -95,7 +95,6 @@ h1 {
   transition: width 0.1s linear;
 }
 
-/* --- canvas area --- */
 .canvas-area { flex: 1; min-width: 0; }
 canvas {
   display: block;
