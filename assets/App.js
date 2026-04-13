@@ -1,6 +1,7 @@
 // ---- main app ----
 
 const { useState, useRef, useEffect, useCallback } = React;
+const e = React.createElement;
 
 function App() {
   const [fig, setFig] = useState('circle');
@@ -116,88 +117,77 @@ function App() {
   const ep = parseInt(epochs) || 500;
   const progress = ep > 0 ? Math.min(100, (currentEpoch / ep) * 100) : 0;
 
-  return (
-    <div className="app">
-      <h1>Naive SGD Demo</h1>
-      <div className="layout">
-        {/* sidebar */}
-        <div className="sidebar">
-          <div className="field">
-            <label>Figure</label>
-            <select value={fig} onChange={e => setFig(e.target.value)} disabled={isTraining}>
-              <option value="circle">circle</option>
-              <option value="heart">heart</option>
-              <option value="astroid">astroid</option>
-              <option value="trefoil">trefoil</option>
-              <option value="square">square</option>
-            </select>
-          </div>
-          <div className="field">
-            <label>Learning rate</label>
-            <input type="number" value={lr} onChange={e => setLr(e.target.value)}
-              step="0.01" min="0.001" max="10" disabled={isTraining} />
-          </div>
-          <div className="field">
-            <label>Epochs</label>
-            <input type="number" value={epochs} onChange={e => setEpochs(e.target.value)}
-              step="100" min="10" max="5000" disabled={isTraining} />
-          </div>
-          <div className="field">
-            <label>Batch size</label>
-            <input type="number" value={batchSize} onChange={e => setBatchSize(e.target.value)}
-              step="1" min="1" max="100" disabled={isTraining} />
-          </div>
-          <div className="field">
-            <label>Seed</label>
-            <input type="number" value={seed} onChange={e => setSeed(e.target.value)}
-              step="1" min="0" disabled={isTraining} />
-          </div>
-          <div className="field">
-            <label>Speed</label>
-            <select value={speedIdx} onChange={e => setSpeedIdx(Number(e.target.value))} disabled={isTraining}>
-              {SPEEDS.map((s, i) => (
-                <option key={i} value={i}>{s.label}</option>
-              ))}
-            </select>
-          </div>
-          <button className="btn btn-train" onClick={startTraining} disabled={isTraining}>
-            {isTraining ? 'training…' : status === 'done' ? 'train again' : 'train'}
-          </button>
-          <button className="btn btn-reset" onClick={reset} disabled={isTraining}>
-            reset
-          </button>
+  return e('div', { className: 'app' },
+    e('h1', null, 'Naive SGD Demo'),
+    e('div', { className: 'layout' },
 
-          {(isTraining || status === 'done') && (
-            <div className="status-box">
-              <div>epoch <span className="val">{currentEpoch}</span> / {ep}</div>
-              {currentLoss !== null && (
-                <div>loss <span className="val">{currentLoss.toFixed(5)}</span></div>
-              )}
-              {status === 'done' && <div style={{color:'#16a34a'}}>done ✓</div>}
-              <div className="progress-bar-wrap">
-                <div className="progress-bar-fill" style={{ width: progress + '%' }} />
-              </div>
-            </div>
-          )}
-        </div>
+      // sidebar
+      e('div', { className: 'sidebar' },
+        e('div', { className: 'field' },
+          e('label', null, 'Figure'),
+          e('select', { value: fig, onChange: ev => setFig(ev.target.value), disabled: isTraining },
+            e('option', { value: 'circle' }, 'circle'),
+            e('option', { value: 'heart' }, 'heart'),
+            e('option', { value: 'astroid' }, 'astroid'),
+            e('option', { value: 'trefoil' }, 'trefoil'),
+            e('option', { value: 'square' }, 'square')
+          )
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Learning rate'),
+          e('input', { type: 'number', value: lr, onChange: ev => setLr(ev.target.value),
+            step: '0.01', min: '0.001', max: '10', disabled: isTraining })
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Epochs'),
+          e('input', { type: 'number', value: epochs, onChange: ev => setEpochs(ev.target.value),
+            step: '100', min: '10', max: '5000', disabled: isTraining })
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Batch size'),
+          e('input', { type: 'number', value: batchSize, onChange: ev => setBatchSize(ev.target.value),
+            step: '1', min: '1', max: '100', disabled: isTraining })
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Seed'),
+          e('input', { type: 'number', value: seed, onChange: ev => setSeed(ev.target.value),
+            step: '1', min: '0', disabled: isTraining })
+        ),
+        e('div', { className: 'field' },
+          e('label', null, 'Speed'),
+          e('select', { value: speedIdx, onChange: ev => setSpeedIdx(Number(ev.target.value)), disabled: isTraining },
+            ...SPEEDS.map((s, i) => e('option', { key: i, value: i }, s.label))
+          )
+        ),
+        e('button', { className: 'btn btn-train', onClick: startTraining, disabled: isTraining },
+          isTraining ? 'training…' : status === 'done' ? 'train again' : 'train'
+        ),
+        e('button', { className: 'btn btn-reset', onClick: reset, disabled: isTraining },
+          'reset'
+        ),
+        (isTraining || status === 'done') && e('div', { className: 'status-box' },
+          e('div', null, 'epoch ', e('span', { className: 'val' }, currentEpoch), ' / ', ep),
+          currentLoss !== null && e('div', null, 'loss ', e('span', { className: 'val' }, currentLoss.toFixed(5))),
+          status === 'done' && e('div', { style: { color: '#16a34a' } }, 'done ✓'),
+          e('div', { className: 'progress-bar-wrap' },
+            e('div', { className: 'progress-bar-fill', style: { width: progress + '%' } })
+          )
+        )
+      ),
 
-        {/* canvas area */}
-        <div className="canvas-area">
-          <div className="canvas-label">figure space</div>
-          <canvas ref={mainCanvas} width={560} height={480}
-            style={{ marginBottom: 14 }} />
-
-          <div className="canvas-label">loss curve</div>
-          <canvas ref={lossCanvas} width={560} height={100} />
-
-          <div className="legend">
-            <span><span className="legend-dot" style={{background:'#3b82f6'}} />target points</span>
-            <span><span className="legend-line" style={{background:'#ef4444'}} />network output</span>
-          </div>
-        </div>
-      </div>
-    </div>
+      // canvas area
+      e('div', { className: 'canvas-area' },
+        e('div', { className: 'canvas-label' }, 'figure space'),
+        e('canvas', { ref: mainCanvas, width: 560, height: 480, style: { marginBottom: 14 } }),
+        e('div', { className: 'canvas-label' }, 'loss curve'),
+        e('canvas', { ref: lossCanvas, width: 560, height: 100 }),
+        e('div', { className: 'legend' },
+          e('span', null, e('span', { className: 'legend-dot', style: { background: '#3b82f6' } }), 'target points'),
+          e('span', null, e('span', { className: 'legend-line', style: { background: '#ef4444' } }), 'network output')
+        )
+      )
+    )
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(e(App, null));
