@@ -129,7 +129,6 @@ function App() {
             e('option', { value: 'circle' }, 'circle'),
             e('option', { value: 'heart' }, 'heart'),
             e('option', { value: 'astroid' }, 'astroid'),
-            e('option', { value: 'trefoil' }, 'trefoil'),
             e('option', { value: 'square' }, 'square')
           )
         ),

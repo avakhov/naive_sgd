@@ -22,14 +22,6 @@ function points(fig, n) {
             const y = 0.6 * Math.sin(angle) ** 3;
             out.push([t, x, y]);
         }
-    } else if (fig === 'trefoil') {
-        for (const t of ta) {
-            const angle = t * 2 * Math.PI;
-            const r = 0.6 * Math.cos(3 * angle);
-            const x = r * Math.cos(angle);
-            const y = r * Math.sin(angle);
-            out.push([t, x, y]);
-        }
     } else if (fig === 'square') {
         for (const t of ta) {
             const s = t * 4;
