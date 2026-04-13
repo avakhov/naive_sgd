@@ -6,7 +6,6 @@ function App() {
   const [lr, setLr] = useState('0.1');
   const [epochs, setEpochs] = useState('500');
   const [batchSize, setBatchSize] = useState('8');
-  const [seed, setSeed] = useState('123');
   const [status, setStatus] = useState('idle');   // idle | training | done
   const [currentEpoch, setCurrentEpoch] = useState(0);
   const [currentLoss, setCurrentLoss] = useState(null);
@@ -41,11 +40,10 @@ function App() {
     const ep = Math.max(1, parseInt(epochs) || 500);
     const bs = Math.max(1, parseInt(batchSize) || 8);
     const lrVal = parseFloat(lr) || 0.1;
-    const sd = parseInt(seed) || 123;
 
     const dataset = points(fig, 100);
     datasetRef.current = dataset;
-    const model = new SimpleNN(1, 20, 20, 2, sd);
+    const model = new SimpleNN(1, 20, 20, 2);
     modelRef.current = model;
     lossHistoryRef.current = [];
     netCurveRef.current = null;
@@ -53,7 +51,7 @@ function App() {
     setCurrentLoss(null);
     setStatus('training');
 
-    const gen = sgd(model, dataset, lrVal, ep, bs, NUM_SNAPSHOTS, SNAP_POINTS);
+    const gen = sgd(model, dataset, lrVal, ep, bs, SNAP_POINTS);
     genRef.current = gen;
 
     const steps = 16;
@@ -143,11 +141,6 @@ function App() {
           e('label', null, 'Batch size'),
           e('input', { type: 'number', value: batchSize, onChange: ev => setBatchSize(ev.target.value),
             step: '1', min: '1', max: '100', disabled: isTraining })
-        ),
-        e('div', { className: 'field' },
-          e('label', null, 'Seed'),
-          e('input', { type: 'number', value: seed, onChange: ev => setSeed(ev.target.value),
-            step: '1', min: '0', disabled: isTraining })
         ),
         e('button', { className: 'btn btn-train', onClick: startTraining, disabled: isTraining },
           isTraining ? 'training…' : status === 'done' ? 'train again' : 'train'

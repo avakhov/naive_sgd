@@ -1,10 +1,10 @@
 class SimpleNN {
-    constructor(n0, n1, n2, n3, seed = 123) {
+    constructor(n0, n1, n2, n3) {
         this.n0 = n0;
         this.n1 = n1;
         this.n2 = n2;
         this.n3 = n3;
-        this.random = makeRandom(seed);
+        this.random = makeRandom(123);
         this.w1 = this._randMatrix(n0, n1);
         this.b1 = this._randArray(n1);
         this.w2 = this._randMatrix(n1, n2);
