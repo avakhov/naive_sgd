@@ -1,7 +1,7 @@
 import os
 import random
 import json
-from nn import SimpleNN, sgd, gd
+from nn import SimpleNN, sgd
 from figures import points
 
 random.seed(123)
