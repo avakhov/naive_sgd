@@ -128,6 +128,7 @@ class SimpleNN:
             self.b3[m] -= lr * dL_b3[m]
             for j in range(self.n2):
                 self.w3[j][m] -= lr * dL_w3[j][m]
+        # out
         return L
 
     def get_graph(self, t_list):
