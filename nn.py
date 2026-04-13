@@ -87,32 +87,26 @@ class SimpleNN:
             x = [batch[b][i] for i in range(self.n0)]
             y = [batch[b][self.n0 + m] for m in range(self.n3)]
             # forward
-            z1 = []
             h1 = []
             for i in range(self.n1):
                 z = 0.0
                 for j in range(self.n0):
                     z += x[j] * self.w1[j][i]
                 z += self.b1[i]
-                z1.append(z)
                 h1.append(self.sigma(z))
-            z2 = []
             h2 = []
             for i in range(self.n2):
                 z = 0.0
                 for j in range(self.n1):
                     z += h1[j] * self.w2[j][i]
                 z += self.b2[i]
-                z2.append(z)
                 h2.append(self.sigma(z))
-            z3 = []
             h3 = []
             for i in range(self.n3):
                 z = 0.0
                 for j in range(self.n2):
                     z += h2[j] * self.w3[j][i]
                 z += self.b3[i]
-                z3.append(z)
                 h3.append(self.sigma(z))
             for m in range(self.n3):
                 L += (h3[m] - y[m]) ** 2
