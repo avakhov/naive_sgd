@@ -1,6 +1,5 @@
 import random
 import math
-from autograd import Value
 from figures import points
 
 def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20, snap_points=100):
@@ -25,7 +24,7 @@ def sgd(model, dataset, lr, epochs, batch_size=32, num_snapshots=20, snap_points
             model.snapshots.append((epoch, model.get_graph(t_list)))
 
 class SimpleNN:
-    def __init__(self, n0, n1, n2, n3, sigma=Value.tanh):
+    def __init__(self, n0, n1, n2, n3, sigma=math.tanh):
         self.n0 = n0
         self.n1 = n1
         self.n2 = n2
@@ -42,53 +41,56 @@ class SimpleNN:
     def forward(self, h0):
         h1 = []
         for i in range(self.n1):
-            h1i = Value(0.0)
+            h1i = 0.0
             for j in range(self.n0):
-                h1i = Value.add(h1i, Value.mul(h0[j], self.w1[j][i]))
-            h1i = Value.add(h1i, self.b1[i])
+                h1i += h0[j]*self.w1[j][i]
+            h1i += self.b1[i]
             h1.append(self.sigma(h1i))
         h2 = []
         for i in range(self.n2):
-            h2i = Value(0.0)
+            h2i = 0.0
             for j in range(self.n1):
-                h2i = Value.add(h2i, Value.mul(h1[j], self.w2[j][i]))
-            h2i = Value.add(h2i, self.b2[i])
+                h2i += h1[j]*self.w2[j][i]
+            h2i += self.b2[i]
             h2.append(self.sigma(h2i))
         h3 = []
         for i in range(self.n3):
-            h3i = Value(0.0)
+            h3i = 0.0
             for j in range(self.n2):
-                h3i = Value.add(h3i, Value.mul(h2[j], self.w3[j][i]))
-            h3i = Value.add(h3i, self.b3[i])
+                h3i += h2[j]*self.w3[j][i]
+            h3i += self.b3[i]
             h3.append(self.sigma(h3i))
         return h3
 
     def loss(self, batch):
-        out = Value(0.0)
+        out = 0.0
         for b in range(len(batch)):
-            x = [Value(batch[b][i]) for i in range(self.n0)]
-            y = [Value(batch[b][self.n0 + m]) for m in range(self.n3)]
+            x = [batch[b][i] for i in range(self.n0)]
+            y = [batch[b][self.n0 + m] for m in range(self.n3)]
             v = self.forward(x)
             for m in range(self.n3):
-                out = Value.add(out, Value.pow(Value.sub(v[m], y[m]), 2))
-        out = Value.mul(out, Value(1.0/len(batch)))
+                out += (v[m] - y[m])**2
+        out /= len(batch)
         return out
 
-    def train(self, batch, lr)
+    def train(self, batch, lr):
+        print("train")
+        exit()
+        dL_w1 = self._rand_matrix(n0, n1)
+        dL_b1 = self._rand_array(n1)
+        dL_w2 = self._rand_matrix(n1, n2)
+        dL_b2 = self._rand_array(n2)
+        dL_w3 = self._rand_matrix(n2, n3)
+        dL_b3 = self._rand_array(n3)
         L = self.loss(batch)
         L.backward()
         L.step(lr)
         return L
 
-    def predict(self, t):
-        h0 = [Value(t)]
-        out = self.forward(h0)
-        return out[0].data, out[1].data
-
     def get_graph(self, t_list):
         net_x, net_y = [], []
         for t in t_list:
-            x, y = self.predict(t)
+            x, y = self.forward([t])
             net_x.append(x)
             net_y.append(y)
         return net_x, net_y
@@ -96,7 +98,7 @@ class SimpleNN:
     def _rand_array(self, n):
         out = []
         for i in range(n):
-            out.append(Value(random.gauss(0, 1.0 / math.sqrt(n))))
+            out.append(random.gauss(0, 1.0 / math.sqrt(n)))
         return out
 
     def _rand_matrix(self, n, m):
@@ -104,5 +106,5 @@ class SimpleNN:
         for i in range(n):
             out.append([])
             for j in range(m):
-                out[len(out) - 1].append(Value(random.gauss(0, 1.0 / math.sqrt(n))))
+                out[len(out) - 1].append(random.gauss(0, 1.0 / math.sqrt(n)))
         return out
