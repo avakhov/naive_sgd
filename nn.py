@@ -75,18 +75,18 @@ class SimpleNN:
         for b in range(N):
             x = [batch[b][i] for i in range(self.n0)]
             y = [batch[b][self.n0 + m] for m in range(self.n3)]
-            # forward
             h1, h2, h3 = self.forward(x)
+            # Loss
             for m in range(self.n3):
-                L += (h3[m] - y[m]) ** 2
-            # # backprop layer 3
+                L += (h3[m] - y[m]) ** 2 / N
+            # backprop layer 3
             dz3 = []
             for m in range(self.n3):
                 dz3.append(2.0*(h3[m] - y[m])*self.deriv(h3[m]))
             for m in range(self.n3):
-                dL_b3[m] += dz3[m]
+                dL_b3[m] += dz3[m] / N
                 for j in range(self.n2):
-                    dL_w3[j][m] += dz3[m] * h2[j]
+                    dL_w3[j][m] += dz3[m] * h2[j] / N
             # backprop layer 2
             dh2 = []
             for j in range(self.n2):
@@ -98,9 +98,9 @@ class SimpleNN:
             for i in range(self.n2):
                 dz2.append(dh2[i] * self.deriv(h2[i]))
             for i in range(self.n2):
-                dL_b2[i] += dz2[i]
+                dL_b2[i] += dz2[i] / N
                 for j in range(self.n1):
-                    dL_w2[j][i] += dz2[i] * h1[j]
+                    dL_w2[j][i] += dz2[i] * h1[j] / N
             # backprop layer 1
             dh1 = []
             for j in range(self.n1):
@@ -112,24 +112,10 @@ class SimpleNN:
             for k in range(self.n1):
                 dz1.append(dh1[k] * self.deriv(h1[k]))
             for k in range(self.n1):
-                dL_b1[k] += dz1[k]
+                dL_b1[k] += dz1[k] / N
                 for j in range(self.n0):
-                    dL_w1[j][k] += dz1[k] * x[j]
-        # avg
-        L /= N
-        for k in range(self.n1):
-            dL_b1[k] /= N
-            for j in range(self.n0):
-                dL_w1[j][k] /= N
-        for i in range(self.n2):
-            dL_b2[i] /= N
-            for j in range(self.n1):
-                dL_w2[j][i] /= N
-        for m in range(self.n3):
-            dL_b3[m] /= N
-            for j in range(self.n2):
-                dL_w3[j][m] /= N
-        # SGD update
+                    dL_w1[j][k] += dz1[k] * x[j] / N
+        # SGD step
         for k in range(self.n1):
             self.b1[k] -= lr * dL_b1[k]
             for j in range(self.n0):
