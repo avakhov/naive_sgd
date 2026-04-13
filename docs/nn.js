@@ -28,8 +28,6 @@ class SimpleNN {
         this.b2 = this._randArray(n2);
         this.w3 = this._randMatrix(n2, n3);
         this.b3 = this._randArray(n3);
-        this.snapshots = [];
-        this.deriv = s => 1 - s * s;
     }
 
     forward(h0) {
