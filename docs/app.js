@@ -120,6 +120,11 @@ function App() {
 
       // sidebar
       e('div', { className: 'sidebar' },
+        e('div', { className: 'docs-box' },
+          e('div', { className: 'docs-label' }, 'source'),
+          e('a', { href: 'https://github.com/avakhov/naive_sgd/blob/master/nn.py', target: '_blank' }, 'nn.py'),
+          e('a', { href: 'https://github.com/avakhov/naive_sgd/blob/master/docs/nn.js', target: '_blank' }, 'nn.js')
+        ),
         e('div', { className: 'field' },
           e('label', null, 'Figure'),
           e('select', { value: fig, onChange: ev => setFig(ev.target.value), disabled: isTraining },

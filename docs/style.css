@@ -95,6 +95,25 @@ h1 {
   transition: width 0.1s linear;
 }
 
+.docs-box {
+  margin-bottom: 20px;
+}
+.docs-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 4px;
+}
+.docs-box a {
+  display: block;
+  font-size: 0.8rem;
+  color: #555;
+  text-decoration: none;
+  line-height: 1.8;
+}
+.docs-box a:hover { color: #1a1a1a; }
+
 .canvas-area { flex: 1; min-width: 0; }
 canvas {
   display: block;

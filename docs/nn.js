@@ -29,7 +29,6 @@ class SimpleNN {
         this.w3 = this._randMatrix(n2, n3);
         this.b3 = this._randArray(n3);
         this.snapshots = [];
-        this.sigma = Math.tanh;
         this.deriv = s => 1 - s * s;
     }
 
@@ -40,7 +39,7 @@ class SimpleNN {
             for (let j = 0; j < this.n0; j++)
                 h1i += h0[j] * this.w1[j][i];
             h1i += this.b1[i];
-            h1.push(this.sigma(h1i));
+            h1.push(Math.tanh(h1i));
         }
         const h2 = [];
         for (let i = 0; i < this.n2; i++) {
@@ -48,7 +47,7 @@ class SimpleNN {
             for (let j = 0; j < this.n1; j++)
                 h2i += h1[j] * this.w2[j][i];
             h2i += this.b2[i];
-            h2.push(this.sigma(h2i));
+            h2.push(Math.tanh(h2i));
         }
         const h3 = [];
         for (let i = 0; i < this.n3; i++) {
@@ -56,7 +55,7 @@ class SimpleNN {
             for (let j = 0; j < this.n2; j++)
                 h3i += h2[j] * this.w3[j][i];
             h3i += this.b3[i];
-            h3.push(this.sigma(h3i));
+            h3.push(Math.tanh(h3i));
         }
         return [h1, h2, h3];
     }
@@ -77,16 +76,16 @@ class SimpleNN {
             // loss
             for (let m = 0; m < this.n3; m++)
                 L += (h3[m] - y[m]) ** 2 / N;
-            // backprop layer 3
+            // layer 3
             const dz3 = [];
             for (let m = 0; m < this.n3; m++)
-                dz3.push(2.0 * (h3[m] - y[m]) * this.deriv(h3[m]));
+                dz3.push(2.0 * (h3[m] - y[m]) * (1 - h3[m]**2));
             for (let m = 0; m < this.n3; m++) {
                 dL_b3[m] += dz3[m] / N;
                 for (let j = 0; j < this.n2; j++)
                     dL_w3[j][m] += dz3[m] * h2[j] / N;
             }
-            // backprop layer 2
+            // layer 2
             const dh2 = [];
             for (let j = 0; j < this.n2; j++) {
                 let dh2j = 0.0;
@@ -96,13 +95,13 @@ class SimpleNN {
             }
             const dz2 = [];
             for (let i = 0; i < this.n2; i++)
-                dz2.push(dh2[i] * this.deriv(h2[i]));
+                dz2.push(dh2[i] * (1 - h2[i]**2));
             for (let i = 0; i < this.n2; i++) {
                 dL_b2[i] += dz2[i] / N;
                 for (let j = 0; j < this.n1; j++)
                     dL_w2[j][i] += dz2[i] * h1[j] / N;
             }
-            // backprop layer 1
+            // layer 1
             const dh1 = [];
             for (let j = 0; j < this.n1; j++) {
                 let dh1j = 0.0;
@@ -112,7 +111,7 @@ class SimpleNN {
             }
             const dz1 = [];
             for (let k = 0; k < this.n1; k++)
-                dz1.push(dh1[k] * this.deriv(h1[k]));
+                dz1.push(dh1[k] * (1 - h1[k]**2));
             for (let k = 0; k < this.n1; k++) {
                 dL_b1[k] += dz1[k] / N;
                 for (let j = 0; j < this.n0; j++)
