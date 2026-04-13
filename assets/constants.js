@@ -1,3 +1,0 @@
-const SNAP_POINTS = 100;
-const NUM_SNAPSHOTS = 20;
-

@@ -9,6 +9,7 @@ function App() {
   const [status, setStatus] = useState('idle');   // idle | training | done
   const [currentEpoch, setCurrentEpoch] = useState(0);
   const [currentLoss, setCurrentLoss] = useState(null);
+  const snapPoints = 100;
 
   const mainCanvas = useRef(null);
   const lossCanvas = useRef(null);
@@ -51,7 +52,7 @@ function App() {
     setCurrentLoss(null);
     setStatus('training');
 
-    const gen = sgd(model, dataset, lrVal, ep, bs, SNAP_POINTS);
+    const gen = sgd(model, dataset, lrVal, ep, bs, snapPoints);
     genRef.current = gen;
 
     const steps = 16;
@@ -78,7 +79,7 @@ function App() {
       }
 
       // draw current network output
-      const tList = Array.from({ length: SNAP_POINTS + 1 }, (_, i) => i / SNAP_POINTS);
+      const tList = Array.from({ length: snapPoints + 1 }, (_, i) => i / snapPoints);
       const [netX, netY] = model.getGraph(tList);
       netCurveRef.current = { netX, netY };
 
