@@ -61,14 +61,14 @@ class SimpleNN:
                 h3i += h2[j]*self.w3[j][i]
             h3i += self.b3[i]
             h3.append(self.sigma(h3i))
-        return h3
+        return h1, h2, h3
 
     def loss(self, batch):
         out = 0.0
         for b in range(len(batch)):
             x = [batch[b][i] for i in range(self.n0)]
             y = [batch[b][self.n0 + m] for m in range(self.n3)]
-            v = self.forward(x)
+            _, _, v = self.forward(x)
             for m in range(self.n3):
                 out += (v[m] - y[m])**2
         out /= len(batch)
@@ -87,27 +87,7 @@ class SimpleNN:
             x = [batch[b][i] for i in range(self.n0)]
             y = [batch[b][self.n0 + m] for m in range(self.n3)]
             # forward
-            h1 = []
-            for i in range(self.n1):
-                z = 0.0
-                for j in range(self.n0):
-                    z += x[j] * self.w1[j][i]
-                z += self.b1[i]
-                h1.append(self.sigma(z))
-            h2 = []
-            for i in range(self.n2):
-                z = 0.0
-                for j in range(self.n1):
-                    z += h1[j] * self.w2[j][i]
-                z += self.b2[i]
-                h2.append(self.sigma(z))
-            h3 = []
-            for i in range(self.n3):
-                z = 0.0
-                for j in range(self.n2):
-                    z += h2[j] * self.w3[j][i]
-                z += self.b3[i]
-                h3.append(self.sigma(z))
+            h1, h2, h3 = self.forward(x)
             for m in range(self.n3):
                 L += (h3[m] - y[m]) ** 2
             # # backprop layer 3
@@ -178,7 +158,8 @@ class SimpleNN:
     def get_graph(self, t_list):
         net_x, net_y = [], []
         for t in t_list:
-            x, y = self.forward([t])
+            _, _, h3 = self.forward([t])
+            x, y = h3
             net_x.append(x)
             net_y.append(y)
         return net_x, net_y
