@@ -32,7 +32,7 @@ function points(fig, n) {
             else if (side === 1) { x = 0.5; y = -0.5 + u; }
             else if (side === 2) { x = 0.5 - u; y = 0.5; }
             else { x = -0.5; y = 0.5 - u; }
-            out.push([t, x, y]);
+            out.push([t, x*0.85, y*0.85]);
         }
     } else {
         throw new Error('wrong fig name');
