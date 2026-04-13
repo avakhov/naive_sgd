@@ -1,16 +1,16 @@
 import os
 import random
 import json
-from nn import SimpleNN, sgd, gd
+from nn import SimpleNN, sgd
 from figures import points
 
 random.seed(123)
 os.makedirs("out", exist_ok=True)
 
-dataset = points("circle", 20)
+dataset = points("circle", 100)
 
-n = SimpleNN(n0=1, n1=10, n2=5, n3=2)
-sgd(n, dataset, lr=0.1, epochs=1000, batch_size=8)
+n = SimpleNN(n0=1, n1=20, n2=20, n3=2)
+sgd(n, dataset, lr=0.1, epochs=500, batch_size=8)
 
 target_x = [row[1] for row in dataset]
 target_y = [row[2] for row in dataset]
