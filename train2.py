@@ -26,13 +26,13 @@ class SimpleNN(nn.Module):
         return self.net(x)
 
 
-dataset = points("circle", 20)
+dataset = points("circle", 100)
 
 t_data = torch.tensor([[row[0]] for row in dataset], dtype=torch.float32)
 xy_data = torch.tensor([[row[1], row[2]] for row in dataset], dtype=torch.float32)
 
-epochs = 50000
-model = SimpleNN(n0=1, n1=10, n2=5, n3=2)
+epochs = 10000
+model = SimpleNN(n0=1, n1=20, n2=20, n3=2)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=1000)
