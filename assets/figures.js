@@ -18,8 +18,8 @@ function points(fig, n) {
     } else if (fig === 'astroid') {
         for (const t of ta) {
             const angle = t * 2 * Math.PI;
-            const x = 0.6 * Math.cos(angle) ** 3;
-            const y = 0.6 * Math.sin(angle) ** 3;
+            const x = 0.5 * Math.cos(angle) ** 3;
+            const y = 0.5 * Math.sin(angle) ** 3;
             out.push([t, x, y]);
         }
     } else if (fig === 'square') {

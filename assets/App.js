@@ -173,10 +173,6 @@ function App() {
         e('canvas', { ref: mainCanvas, width: 560, height: 320, style: { marginBottom: 14 } }),
         e('div', { className: 'canvas-label' }, 'loss curve'),
         e('canvas', { ref: lossCanvas, width: 560, height: 100 }),
-        e('div', { className: 'legend' },
-          e('span', null, e('span', { className: 'legend-dot', style: { background: '#3b82f6' } }), 'target points'),
-          e('span', null, e('span', { className: 'legend-line', style: { background: '#ef4444' } }), 'network output')
-        )
       )
     )
   );
