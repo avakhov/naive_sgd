@@ -63,17 +63,6 @@ class SimpleNN:
             h3.append(self.sigma(h3i))
         return h1, h2, h3
 
-    def loss(self, batch):
-        out = 0.0
-        for b in range(len(batch)):
-            x = [batch[b][i] for i in range(self.n0)]
-            y = [batch[b][self.n0 + m] for m in range(self.n3)]
-            _, _, v = self.forward(x)
-            for m in range(self.n3):
-                out += (v[m] - y[m])**2
-        out /= len(batch)
-        return out
-
     def train(self, batch, lr):
         dL_w1 = self._zero_matrix(self.n0, self.n1)
         dL_b1 = self._zero_array(self.n1)
