@@ -37,7 +37,8 @@ model = SimpleNN(n0=1, n1=20, n2=20, n3=2)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=1000)
 snap_epochs = {i * (epochs - 1) // (NUM_SNAPSHOTS - 1) for i in range(NUM_SNAPSHOTS)}
-t_snap = torch.tensor([[i / SNAP_POINTS] for i in range(SNAP_POINTS + 1)], dtype=torch.float32)
+d = 2
+t_snap = torch.tensor([[i / SNAP_POINTS] for i in range(d, SNAP_POINTS + 1 - d)], dtype=torch.float32)
 
 snapshots = []
 
