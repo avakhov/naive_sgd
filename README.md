@@ -1,3 +1,3 @@
 # naive_sgd
 
-Interactive demos of neural network and other things
+Interactive demos of neural networks and other funny things.
